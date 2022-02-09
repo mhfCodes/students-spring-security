@@ -1,0 +1,8 @@
+authentication and authorization with JWT:
+two main endpoints: "/api/students" (for students, has student_read and course_read authorities),
+"/management/api/students" (for admins, has student_read, student_write, course_read, course_write authorities)
+after loging in user will get a jwt and will send that with further requests.
+
+
+
+
