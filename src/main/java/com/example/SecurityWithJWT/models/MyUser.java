@@ -10,12 +10,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 
 @Entity
 public class MyUser {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(
+				name = "user_sequence",
+				sequenceName = "user_sequence",
+				allocationSize = 1				
+			)
+	@GeneratedValue(
+				strategy = GenerationType.SEQUENCE,
+				generator = "user_sequence"
+				)
 	private Long id;
 	
 	@Column(nullable = false, unique = true)

@@ -1,6 +1,6 @@
 package com.example.SecurityWithJWT.service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,8 @@ public class MyUserService implements UserDetailsService {
 		MyUser myUser = myUserRepo.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException("Username" + username + "Does Not Exist"));
 		
-		List<SimpleGrantedAuthority> myRoles = myUser.getRoles()
-				.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList());
+		Set<SimpleGrantedAuthority> myRoles = myUser.getRoles()
+				.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toSet());
 		
 		MyUserDetails myUserDetails = new MyUserDetails(myUser.getUsername(), myUser.getPassword(), myRoles, myUser.isActive());
 		return myUserDetails;

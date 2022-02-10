@@ -10,5 +10,5 @@ import com.example.SecurityWithJWT.models.Role;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-	Optional<Role> findByName(String roleName);
+	Optional<Role> findByRoleName(String roleName);
 }
