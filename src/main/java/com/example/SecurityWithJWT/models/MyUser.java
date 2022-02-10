@@ -27,13 +27,16 @@ public class MyUser {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Collection<Role> roles = new ArrayList<>();
 	
+	private Boolean active;
+	
 	public MyUser() {
 	}
 	
-	public MyUser(String username, String password, Collection<Role> roles) {
+	public MyUser(String username, String password, Collection<Role> roles, Boolean active) {
 		this.username = username;
 		this.password = password;
 		this.roles = roles;
+		this.active = active;
 	}
 
 	public Long getId() {
@@ -66,6 +69,14 @@ public class MyUser {
 
 	public void setRoles(Collection<Role> roles) {
 		this.roles = roles;
+	}
+
+	public Boolean isActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 }
