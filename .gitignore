@@ -36,7 +36,8 @@ build/
 .mvn/
 mvnw
 mvnw.cmd
-
+desc.txt
+src/main/resources/application.properties
 
 
 
