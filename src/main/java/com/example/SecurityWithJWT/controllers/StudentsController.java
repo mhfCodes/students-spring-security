@@ -32,7 +32,7 @@ public class StudentsController {
 	@GetMapping(path = "/{studentId}")
 	@PreAuthorize("hasRole('ROLE_STUDENT')")
 	public MyUser getInfo(@PathVariable("studentId") Long id) {
-		return myUserService.getLoggedInStudentData(id);
+		return myUserService.getStudentData(id);
 	}
 	
 	@PutMapping(path = "/{studentId}")

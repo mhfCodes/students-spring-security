@@ -1,5 +1,7 @@
 package com.example.SecurityWithJWT.service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -12,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.SecurityWithJWT.models.MyUser;
 import com.example.SecurityWithJWT.models.MyUserDetails;
@@ -33,7 +34,7 @@ public class MyUserService implements UserDetailsService {
 		this.passwordEncoder = passwordEncoder;
 	}
 	
-	public MyUser getLoggedInStudentData(Long id) {
+	public MyUser getStudentData(Long id) {
 		MyUser myUser = myUserRepo.findById(id).orElseThrow(() -> new IllegalStateException("Can not find id"));
 		return myUser;
 	}
@@ -57,6 +58,20 @@ public class MyUserService implements UserDetailsService {
 		}
 		
 		myUserRepo.save(myUser);
+	}
+	
+	public Set<MyUser> getAllStudentsAndTrainees() {
+		List<MyUser> allUsers = myUserRepo.findAll();
+		Set<MyUser> studentsAndTrainees = new HashSet<>();
+		
+		allUsers.forEach(user -> {
+			user.getRoles().forEach(role -> {
+				if (role.getRoleName().equals("ROLE_STUDENT") || role.getRoleName().equals("ROLE_ADMIN_TRAINEE")) {
+					studentsAndTrainees.add(user);
+				}
+			});
+		});
+		return studentsAndTrainees;
 	}
 	
 	
