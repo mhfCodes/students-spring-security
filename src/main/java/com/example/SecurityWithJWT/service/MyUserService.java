@@ -1,5 +1,6 @@
 package com.example.SecurityWithJWT.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -8,7 +9,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -79,6 +82,49 @@ public class MyUserService implements UserDetailsService {
 	public void addStudent(MyUser student) {
 		student.setPassword(passwordEncoder.encode(student.getPassword()));
 		myUserRepo.save(student);
+	}
+	
+	public void updateActiveStatus(Long id, Boolean active) {
+		MyUserDetails myUser = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		List<GrantedAuthority> myAuthorities = new ArrayList<GrantedAuthority>(myUser.getAuthorities());
+		MyUser studentOrAdminTrainee = myUserRepo.findById(id).orElseThrow(() -> new IllegalStateException("Can Not Find Id"));
+			
+		if (myAuthorities.get(0).equals("ROLE_ADMIN")) {
+			studentOrAdminTrainee.setActive(active);
+			
+		} else if (myAuthorities.get(0).equals("ROLE_ADMIN_TRAINEE")) {
+			studentOrAdminTrainee.getRoles().forEach(myRole -> {
+				
+				if (myRole.getRoleName().equals("ROLE_STUDENT")) {
+					studentOrAdminTrainee.setActive(active);
+				} else {
+					throw new IllegalStateException("Admin Trainee Can Only Change Students Active Status");
+				}
+				
+			});
+			
+		}
+			
+//		myUser.getAuthorities().forEach(role -> {
+//			
+//			if (role.getAuthority().equals("ROLE_ADMIN")) {
+//				
+//				studentOrAdminTrainee.setActive(active);
+//			} else if (role.getAuthority().equals("ROLE_ADMIN_TRAINEE")) {
+//				
+//				studentOrAdminTrainee.getRoles().forEach(myRole -> {
+//					
+//					if (myRole.getRoleName().equals("ROLE_STUDENT")) {
+//						studentOrAdminTrainee.setActive(active);
+//					} else {
+//						throw new IllegalStateException("Admin Trainee Can Only Change Students Active Status");
+//					}
+//					
+//				});
+//			}
+//			
+//		});	
+		
 	}
 	
 	@Override
