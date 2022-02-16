@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.SecurityWithJWT.models.MyUser;
 import com.example.SecurityWithJWT.models.MyUserDetails;
@@ -21,6 +22,7 @@ import com.example.SecurityWithJWT.repository.MyUserRepository;
 import com.example.SecurityWithJWT.repository.RoleRepository;
 
 @Service
+@Transactional
 public class MyUserService implements UserDetailsService {
 	
 	private final MyUserRepository myUserRepo;
@@ -74,6 +76,10 @@ public class MyUserService implements UserDetailsService {
 		return studentsAndTrainees;
 	}
 	
+	public void addStudent(MyUser student) {
+		student.setPassword(passwordEncoder.encode(student.getPassword()));
+		myUserRepo.save(student);
+	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

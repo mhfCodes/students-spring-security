@@ -12,19 +12,24 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 @Entity
 public class MyUser {
 
+	
+//	@SequenceGenerator(
+//				name = "user_sequence",
+//				sequenceName = "user_sequence",
+//				allocationSize = 1				
+//			)
+//	@GeneratedValue(
+//				strategy = GenerationType.SEQUENCE,
+//				generator = "user_sequence"
+//				)
 	@Id
-	@SequenceGenerator(
-				name = "user_sequence",
-				sequenceName = "user_sequence",
-				allocationSize = 1				
-			)
-	@GeneratedValue(
-				strategy = GenerationType.SEQUENCE,
-				generator = "user_sequence"
-				)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	@Column(nullable = false, unique = true)
@@ -34,6 +39,7 @@ public class MyUser {
 	private String password;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
+	@Cascade({CascadeType.SAVE_UPDATE})
 	private Collection<Role> roles = new ArrayList<>();
 	
 	private Boolean active;
@@ -87,5 +93,12 @@ public class MyUser {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
+
+	@Override
+	public String toString() {
+		return "MyUser [id=" + id + ", username=" + username + ", password=" + password + ", roles=" + roles
+				+ ", active=" + active + "]";
+	}
 	
+		
 }

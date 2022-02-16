@@ -20,26 +20,26 @@ public class SecurityWithJwtApplication {
 		SpringApplication.run(SecurityWithJwtApplication.class, args);
 	}
 		
-//	@Bean
-//	CommandLineRunner run(MyUserRepository userRepo, RoleRepository roleRepo) {
-//		return args -> {
-//			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//			
-//			Role STUDENT = new Role("ROLE_STUDENT");
-//			Role ADMIN = new Role("ROLE_ADMIN");
-//			Role ADMIN_TRAINEE = new Role("ROLE_ADMIN_TRAINEE");
-//			
-//			MyUser john = new MyUser("john007", encoder.encode("1234"), List.of(STUDENT), true);
-//			MyUser alex = new MyUser("alex007", encoder.encode("1234"), List.of(STUDENT), false);
-//			MyUser david = new MyUser("david007", encoder.encode("1234"), List.of(ADMIN), true);
-//			MyUser jason = new MyUser("jason007", encoder.encode("1234"), List.of(ADMIN_TRAINEE), true);
-//			MyUser sara = new MyUser("sara007", encoder.encode("1234"), List.of(STUDENT, ADMIN_TRAINEE), true);
-//			MyUser alice = new MyUser("alice007", encoder.encode("1234"), List.of(ADMIN), false);
-//			
-//			roleRepo.saveAll(List.of(STUDENT, ADMIN, ADMIN_TRAINEE));
-//			userRepo.saveAll(List.of(john, alex, david, jason, sara, alice));			
-//			
-//		};
-//	}
+	@Bean
+	CommandLineRunner run(MyUserRepository userRepo, RoleRepository roleRepo) {
+		return args -> {
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+			
+			Role STUDENT = new Role("ROLE_STUDENT");
+			Role ADMIN = new Role("ROLE_ADMIN");
+			Role ADMIN_TRAINEE = new Role("ROLE_ADMIN_TRAINEE");
+			
+			MyUser john = new MyUser("john007", encoder.encode("1234"), List.of(STUDENT), true);
+			MyUser alex = new MyUser("alex007", encoder.encode("1234"), List.of(STUDENT), false);
+			MyUser david = new MyUser("david007", encoder.encode("1234"), List.of(ADMIN), true);
+			MyUser jason = new MyUser("jason007", encoder.encode("1234"), List.of(ADMIN_TRAINEE), true);
+			MyUser sara = new MyUser("sara007", encoder.encode("1234"), List.of(STUDENT, ADMIN_TRAINEE), true);
+			MyUser alice = new MyUser("alice007", encoder.encode("1234"), List.of(ADMIN), false);
+			
+			roleRepo.saveAll(List.of(STUDENT, ADMIN, ADMIN_TRAINEE));
+			userRepo.saveAll(List.of(john, alex, david, jason, sara, alice));			
+			
+		};
+	}
 
 }
