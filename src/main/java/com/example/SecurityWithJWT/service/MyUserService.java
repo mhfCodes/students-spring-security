@@ -56,10 +56,14 @@ public class MyUserService implements UserDetailsService {
 			}
 			
 			myUser.setUsername(username);
+		} else {
+			throw new IllegalStateException("Username Either Does Not Exist Or Is The Same As Before");
 		}
 		
 		if (password != null && password.length() > 0 && !passwordEncoder.matches(password, myUser.getPassword())) {
 			myUser.setPassword(passwordEncoder.encode(password));
+		} else {
+			throw new IllegalStateException("Password Either Does Not Exist Or Is The Same As Before");
 		}
 		
 		myUserRepo.save(myUser);
@@ -79,52 +83,48 @@ public class MyUserService implements UserDetailsService {
 		return studentsAndTrainees;
 	}
 	
-	public void addStudent(MyUser student) {
-		student.setPassword(passwordEncoder.encode(student.getPassword()));
-		myUserRepo.save(student);
+	public void addStudentOrTrainee(MyUser studentOrTrainee) {
+		studentOrTrainee.setPassword(passwordEncoder.encode(studentOrTrainee.getPassword()));
+		myUserRepo.save(studentOrTrainee);
 	}
 	
 	public void updateActiveStatus(Long id, Boolean active) {
 		MyUserDetails myUser = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		List<GrantedAuthority> myAuthorities = new ArrayList<GrantedAuthority>(myUser.getAuthorities());
 		MyUser studentOrAdminTrainee = myUserRepo.findById(id).orElseThrow(() -> new IllegalStateException("Can Not Find Id"));
 			
-		if (myAuthorities.get(0).equals("ROLE_ADMIN")) {
-			studentOrAdminTrainee.setActive(active);
+		myUser.getAuthorities().forEach(role -> {
 			
-		} else if (myAuthorities.get(0).equals("ROLE_ADMIN_TRAINEE")) {
-			studentOrAdminTrainee.getRoles().forEach(myRole -> {
+			if (role.getAuthority().equals("ROLE_ADMIN")) {
 				
-				if (myRole.getRoleName().equals("ROLE_STUDENT")) {
-					studentOrAdminTrainee.setActive(active);
-				} else {
-					throw new IllegalStateException("Admin Trainee Can Only Change Students Active Status");
-				}
+				studentOrAdminTrainee.setActive(active);
+			} else if (role.getAuthority().equals("ROLE_ADMIN_TRAINEE")) {
 				
-			});
+				studentOrAdminTrainee.getRoles().forEach(myRole -> {
+					
+					if (myRole.getRoleName().equals("ROLE_STUDENT")) {
+						studentOrAdminTrainee.setActive(active);
+					} else {
+						throw new IllegalStateException("Admin Trainee Can Only Change Students Active Status");
+					}
+					
+				});
+			}
 			
-		}
-			
-//		myUser.getAuthorities().forEach(role -> {
-//			
-//			if (role.getAuthority().equals("ROLE_ADMIN")) {
-//				
-//				studentOrAdminTrainee.setActive(active);
-//			} else if (role.getAuthority().equals("ROLE_ADMIN_TRAINEE")) {
-//				
-//				studentOrAdminTrainee.getRoles().forEach(myRole -> {
-//					
-//					if (myRole.getRoleName().equals("ROLE_STUDENT")) {
-//						studentOrAdminTrainee.setActive(active);
-//					} else {
-//						throw new IllegalStateException("Admin Trainee Can Only Change Students Active Status");
-//					}
-//					
-//				});
-//			}
-//			
-//		});	
+		});	
+		myUserRepo.save(studentOrAdminTrainee);
+
+	}
+	
+	public void deleteStudentOrTrainee(Long id) {
+		MyUser studentOrAdminTrainee = myUserRepo.findById(id).orElseThrow(() -> new IllegalStateException("Can Not Find id"));
 		
+		studentOrAdminTrainee.getRoles().forEach(role -> {
+			if (role.getRoleName().equals("ROLE_ADMIN")) {
+				throw new IllegalStateException("Admin Can Not Delete Admin");
+			}
+		});
+		
+		myUserRepo.deleteById(id);	
 	}
 	
 	@Override
